@@ -12,3 +12,6 @@ functional patterns: *map*, *flatMap*, *Monad*, *State Monad*, *map2*, *mapN*,
 I implement these functional abstractions in a cats-like way
 just to delete the new abstractions and replace them by the respective
 import from the Cats library.
+
+A detailed description of each implementation step can be found
+in the head comments of the respective source file.
