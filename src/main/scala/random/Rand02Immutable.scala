@@ -6,6 +6,8 @@ package random
   The seed is the state of random value generation.
   Each method takes a 'seed: Long' parameter and returns a '(Long, A)'
   where the 1st tuple component is the new seed and the snd is the generated value of the respective type.
+
+  What is a bit cumbersome: We have to thread the seed from one invocation to the next.
  */
 object Rand02Immutable extends App {
 

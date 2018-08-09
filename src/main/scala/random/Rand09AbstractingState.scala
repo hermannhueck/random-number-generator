@@ -94,11 +94,10 @@ object Rand09AbstractingState extends App {
   import cats.syntax.functor._
   import cats.syntax.flatMap._
 
-  def sumOfSquares[F[_]: Monad](m1: F[Int], m2: F[Int]): F[Int] =
-    for {
-      i1 <- m1
-      i2 <- m2
-    } yield i1 * i1 + i2 * i2
+  def sumOfSquares[F[_]: Monad](mi1: F[Int], mi2: F[Int]): F[Int] = for {
+    i1 <- mi1
+    i2 <- mi2
+  } yield i1 * i1 + i2 * i2
 
   import cats.instances.option._
 

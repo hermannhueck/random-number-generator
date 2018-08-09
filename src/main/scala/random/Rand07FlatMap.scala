@@ -3,6 +3,9 @@ package random
 /*
   Implementing 'flatMap' opens up the possibility to improve 'nextIntPair'.
   This also allows us to implement 'rollDieNTimes2' with a for-comprehension.
+
+  With 'map' and 'flatMap' we can mostly avoid threading the RNG through
+  the functions or through the program.
  */
 object Rand07FlatMap extends App {
 
