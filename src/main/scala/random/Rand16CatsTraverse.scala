@@ -10,7 +10,8 @@ import scala.language.higherKinds
   Using typeclass 'cats.Traverse'
 
   'cats.Traverse' provides traversing and sequencing which I implemented myself.
-  In this step I replace the usage of my own impl by the usage of 'cats.Traverse.sequence' and 'cats.Traverse.traverse'.
+  In this step I replace the usage of my own impl
+  with the usage of 'cats.Traverse.sequence' and 'cats.Traverse.traverse'.
  */
 object Rand16CatsTraverse extends App {
 
@@ -20,8 +21,7 @@ object Rand16CatsTraverse extends App {
 
   object Random {
 
-    val nextLong: Random[Long] =
-      State { rng => rng.nextLong }
+    val nextLong: Random[Long] = State { rng => rng.nextLong }
 
     val nextInt: Random[Int] =
       nextLong map (l => (l >>> 16).toInt)

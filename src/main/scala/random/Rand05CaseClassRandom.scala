@@ -13,48 +13,40 @@ object Rand05CaseClassRandom extends App {
 
   println("\n----- Wrapping the functions 'RNG => (RNG, A)' in case class 'Random'")
 
-  final case class Random[A](run: RNG => (RNG, A))
+  final case class Random[A](run: RNG => (RNG, A)) {
+
+  }
 
   object Random {
 
     val nextLong: Random[Long] = Random { rng => rng.nextLong }
 
-    val nextInt: Random[Int] = Random {
-      rng => {
-        val (r, long) = rng.nextLong
-        (r, (long >>> 16).toInt)
-      }
+    val nextInt: Random[Int] = Random { rng =>
+      val (r, long) = rng.nextLong
+      (r, (long >>> 16).toInt)
     }
 
-    val nonNegativeInt: Random[Int] = Random {
-      rng => {
-        val (newRng, i) = nextInt.run(rng)
-        val nonNeg = if (i < 0) -(i + 1) else i
-        (newRng, nonNeg)
-      }
+    val nonNegativeInt: Random[Int] = Random { rng =>
+      val (newRng, i) = nextInt.run(rng)
+      val nonNeg = if (i < 0) -(i + 1) else i
+      (newRng, nonNeg)
     }
 
-    val nextDouble: Random[Double] = Random {
-      rng => {
-        val (newRng, i) = nonNegativeInt.run(rng)
-        val d = i / (Int.MaxValue.toDouble + 1)
-        (newRng, d)
-      }
+    val nextDouble: Random[Double] = Random { rng =>
+      val (newRng, i) = nonNegativeInt.run(rng)
+      val d = i / (Int.MaxValue.toDouble + 1)
+      (newRng, d)
     }
 
-    val nextBoolean: Random[Boolean] = Random {
-      rng => {
-        val (newRng, i) = nextInt.run(rng)
-        (newRng, i % 2 == 0)
-      }
+    val nextBoolean: Random[Boolean] = Random { rng =>
+      val (newRng, i) = nextInt.run(rng)
+      (newRng, i % 2 == 0)
     }
 
-    val nextIntPair: Random[(Int, Int)] = Random {
-      rng => {
-        val (rng1, i1) = nextInt.run(rng)
-        val (rng2, i2) = nextInt.run(rng1)
-        (rng2, (i1, i2))
-      }
+    val nextIntPair: Random[(Int, Int)] = Random { rng =>
+      val (rng1, i1) = nextInt.run(rng)
+      val (rng2, i2) = nextInt.run(rng1)
+      (rng2, (i1, i2))
     }
   }
 
@@ -72,22 +64,18 @@ object Rand05CaseClassRandom extends App {
   println("random IntPair: " + intPair)
 
 
-  val rollDie: Random[Int] = Random {
-    rng => {
-      val (newRng, int) = nonNegativeInt.run(rng)
-      (newRng, 1 + int % 6)
-    }
+  val rollDie: Random[Int] = Random { rng =>
+    val (newRng, int) = nonNegativeInt.run(rng)
+    (newRng, 1 + int % 6)
   }
 
-  def rollDieNTimes(times: Int): Random[List[Int]] = Random {
-    rng => {
-      if (times <= 0)
-        (rng, List.empty[Int])
-      else {
-        val (r1, x) = rollDie.run(rng)
-        val (r2, xs) = rollDieNTimes(times-1).run(r1)
-        (r2, x :: xs)
-      }
+  def rollDieNTimes(times: Int): Random[List[Int]] = Random { rng =>
+    if (times <= 0)
+      (rng, List.empty[Int])
+    else {
+      val (r1, x) = rollDie.run(rng)
+      val (r2, xs) = rollDieNTimes(times-1).run(r1)
+      (r2, x :: xs)
     }
   }
 

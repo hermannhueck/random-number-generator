@@ -37,8 +37,7 @@ object Rand15SequenceTraverse extends App {
 
   object Random {
 
-    val nextLong: Random[Long] =
-      State { rng => rng.nextLong }
+    val nextLong: Random[Long] = State { rng => rng.nextLong }
 
     val nextInt: Random[Int] =
       nextLong map (l => (l >>> 16).toInt)
@@ -104,11 +103,11 @@ object Rand15SequenceTraverse extends App {
     if (times <= 0)
       Applicative[Random].pure[List[Int]](List.empty[Int])
     else
-      State { rng => {
+      State { rng =>
         val (r1, x) = rollDie.run(rng).value
         val (r2, xs) = rollDieNTimes1(times-1).run(r1).value
         (r2, x :: xs)
-      }}
+      }
 
   import cats.syntax.applicative._
 
@@ -118,14 +117,14 @@ object Rand15SequenceTraverse extends App {
     else
       (rollDie, rollDieNTimes2(times-1)) mapN (_ :: _)
 
-  def rollDieNTimes3(times: Int): Random[List[Int]] = State { rng => {
-        val randList: List[Random[Int]] = (0 until (0 max times)).toList map (_ => rollDie)
-        randList.foldRight((rng, List.empty[Int])) { (rand, acc) =>
-          val (oldRng, xs) = acc
-          val (newRng, x) = rand.run(oldRng).value
-          (newRng, x :: xs)
-        }
-      }}
+  def rollDieNTimes3(times: Int): Random[List[Int]] = State { rng =>
+    val randList: List[Random[Int]] = (0 until (0 max times)).toList map (_ => rollDie)
+    randList.foldRight((rng, List.empty[Int])) { (rand, acc) =>
+      val (oldRng, xs) = acc
+      val (newRng, x) = rand.run(oldRng).value
+      (newRng, x :: xs)
+    }
+  }
 
   def rollDieNTimes4(times: Int): Random[List[Int]] =
     sequenceRands((0 until (0 max times)).toList map (_ => rollDie))

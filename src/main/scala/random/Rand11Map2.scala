@@ -23,8 +23,7 @@ object Rand11Map2 extends App {
 
   object Random {
 
-    val nextLong: Random[Long] =
-      State { rng => rng.nextLong }
+    val nextLong: Random[Long] = State { rng => rng.nextLong }
 
     val nextInt: Random[Int] =
       nextLong map (l => (l >>> 16).toInt)
@@ -116,11 +115,11 @@ object Rand11Map2 extends App {
     if (times <= 0)
       State { rng => (rng, List.empty[Int]) }
     else
-      State { rng => {
+      State { rng =>
         val (r1, x) = rollDie.run(rng).value
         val (r2, xs) = rollDieNTimes1(times-1).run(r1).value
         (r2, x :: xs)
-      }}
+      }
 
   def rollDieNTimes2(times: Int): Random[List[Int]] =
     if (times <= 0)

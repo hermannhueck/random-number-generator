@@ -12,25 +12,20 @@ object Rand07FlatMap extends App {
 
     def runA: RNG => A = rng => run(rng)._2
 
-    def map[B](f: A => B): Random[B] = Random {
-      rng => {
-        val (newRng, a) = run(rng)
-        (newRng, f(a))
-      }
+    def map[B](f: A => B): Random[B] = Random { rng =>
+      val (newRng, a) = run(rng)
+      (newRng, f(a))
     }
 
-    def flatMap[B](f: A => Random[B]): Random[B] = Random {
-      rng => {
-        val (newRng, a) = run(rng)
-        f(a).run(newRng)
-      }
+    def flatMap[B](f: A => Random[B]): Random[B] = Random { rng =>
+      val (newRng, a) = run(rng)
+      f(a).run(newRng)
     }
   }
 
   object Random {
 
-    val nextLong: Random[Long] =
-      Random { rng => rng.nextLong }
+    val nextLong: Random[Long] = Random { rng => rng.nextLong }
 
     val nextInt: Random[Int] =
       nextLong map (l => (l >>> 16).toInt)
@@ -85,11 +80,11 @@ object Rand07FlatMap extends App {
     if (times <= 0)
       Random { rng => (rng, List.empty[Int]) }
     else
-      Random { rng => {
+      Random { rng =>
         val (r1, x) = rollDie.run(rng)
         val (r2, xs) = rollDieNTimes1(times-1).run(r1)
         (r2, x :: xs)
-      }}
+      }
 
   def rollDieNTimes2(times: Int): Random[List[Int]] =
     if (times <= 0)

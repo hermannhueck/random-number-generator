@@ -26,11 +26,11 @@ object Rand01Mutable extends App {
     1 + rng.nextInt(6)
   }
 
-  def rollDieNTimes(n: Int): List[Int] =
-    if (n <= 0)
+  def rollDieNTimes(times: Int): List[Int] =
+    if (times <= 0)
       List.empty[Int]
     else
-      (0 until n).toList map (_ => rollDie)
+      (0 until times).toList map (_ => rollDie)
 
   println(  "Rolled die 20 times: " + rollDieNTimes(20)  )
 

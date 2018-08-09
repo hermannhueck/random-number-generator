@@ -10,18 +10,15 @@ object Rand06Map extends App {
 
   final case class Random[A](run: RNG => (RNG, A)) {
 
-    def map[B](f: A => B): Random[B] = Random {
-      rng => {
-        val (newRng, a) = run(rng)
-        (newRng, f(a))
-      }
+    def map[B](f: A => B): Random[B] = Random { rng =>
+      val (newRng, a) = run(rng)
+      (newRng, f(a))
     }
   }
 
   object Random {
 
-    val nextLong: Random[Long] =
-      Random { rng => rng.nextLong }
+    val nextLong: Random[Long] = Random { rng => rng.nextLong }
 
     val nextInt: Random[Int] =
       nextLong map (l => (l >>> 16).toInt)
@@ -35,12 +32,10 @@ object Rand06Map extends App {
     val nextBoolean: Random[Boolean] =
       nextInt map (i => i % 2 == 0)
 
-    val nextIntPair: Random[(Int, Int)] = Random {
-      rng => {
-        val (rng1, i1) = nextInt.run(rng)
-        val (rng2, i2) = nextInt.run(rng1)
-        (rng2, (i1, i2))
-      }
+    val nextIntPair: Random[(Int, Int)] = Random { rng =>
+      val (rng1, i1) = nextInt.run(rng)
+      val (rng2, i2) = nextInt.run(rng1)
+      (rng2, (i1, i2))
     }
   }
 
@@ -62,15 +57,13 @@ object Rand06Map extends App {
   val rollDie: Random[Int] =
     nonNegativeInt map (i => 1 + i % 6)
 
-  def rollDieNTimes(times: Int): Random[List[Int]] = Random {
-    rng => {
-      if (times <= 0)
-        (rng, List.empty[Int])
-      else {
-        val (r1, x) = rollDie.run(rng)
-        val (r2, xs) = rollDieNTimes(times-1).run(r1)
-        (r2, x :: xs)
-      }
+  def rollDieNTimes(times: Int): Random[List[Int]] = Random { rng =>
+    if (times <= 0)
+      (rng, List.empty[Int])
+    else {
+      val (r1, x) = rollDie.run(rng)
+      val (r2, xs) = rollDieNTimes(times-1).run(r1)
+      (r2, x :: xs)
     }
   }
 

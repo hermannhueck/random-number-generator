@@ -22,18 +22,14 @@ object Rand09AbstractingState extends App {
     def runA: S => A = run(_)._2
 
     // map doesn't manipulate the state, it just transforms the A value
-    def map[B](f: A => B): State[S, B] = State {
-      s => {
-        val (s1, a1) = run(s)
-        (s1, f(a1))
-      }
+    def map[B](f: A => B): State[S, B] = State { s =>
+      val (s1, a1) = run(s)
+      (s1, f(a1))
     }
 
-    def flatMap[B](f: A => State[S, B]): State[S, B] = State {
-      s => {
-        val (s1, a1) = run(s)
-        f(a1).run(s1)
-      }
+    def flatMap[B](f: A => State[S, B]): State[S, B] = State { s =>
+      val (s1, a1) = run(s)
+      f(a1).run(s1)
     }
   }
 
@@ -51,8 +47,7 @@ object Rand09AbstractingState extends App {
 
   object Random {
 
-    val nextLong: Random[Long] =
-      State { rng => rng.nextLong }
+    val nextLong: Random[Long] = State { rng => rng.nextLong }
 
     val nextInt: Random[Int] =
       nextLong map (l => (l >>> 16).toInt)
@@ -121,11 +116,11 @@ object Rand09AbstractingState extends App {
     if (times <= 0)
       State { rng => (rng, List.empty[Int]) }
     else
-      State { rng => {
+      State { rng =>
         val (r1, x) = rollDie.run(rng)
         val (r2, xs) = rollDieNTimes1(times-1).run(r1)
         (r2, x :: xs)
-      }}
+      }
 
   def rollDieNTimes2(times: Int): Random[List[Int]] =
     if (times <= 0)

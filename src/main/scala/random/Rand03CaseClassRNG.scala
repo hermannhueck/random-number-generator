@@ -8,8 +8,7 @@ object Rand03CaseClassRNG extends App {
 
   println("\n----- Wrapping seed generation in case class 'RNG'")
 
-  def nextLong(rng: RNG): (RNG, Long) =
-    rng.nextLong
+  def nextLong(rng: RNG): (RNG, Long) = rng.nextLong
 
   def nextInt(rng: RNG): (RNG, Int) = {
     val (r, long) = rng.nextLong
@@ -28,14 +27,14 @@ object Rand03CaseClassRNG extends App {
     (newRng, d)
   }
 
-  def nextBoolean(rng: RNG): (RNG, Boolean) =
-    nextInt(rng) match {
-      case (newRng, i) => (newRng, i % 2 == 0)
-    }
+  def nextBoolean(rng: RNG): (RNG, Boolean) = {
+    val (newRng, i) = nextInt(rng)
+    (newRng, i % 2 == 0)
+  }
 
   def nextIntPair(rng: RNG): (RNG, (Int, Int)) = {
     val (rng1, i1) = nextInt(rng)
-    val (rng2, i2) = nextInt(rng0)
+    val (rng2, i2) = nextInt(rng1)
     (rng2, (i1, i2))
   }
 
