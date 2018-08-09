@@ -4,6 +4,12 @@ import cats.Monad
 
 import scala.language.higherKinds
 
+/*
+  With 'map' and 'flatMap' it is easy to give 'Random' a Monad instance.
+  For the Monad instance we must implement 'pure', 'flatMap' and 'tailRecM'
+  (As 'tailRecM' is not invoked in this simple example the impl with ??? is sufficient.)
+  Now we can use our 'Random' Monad wherever a Monad is required: see 'sumOfSquares'
+ */
 object Rand08Monad extends App {
 
   println("\n----- Giving Random a Monad instance")

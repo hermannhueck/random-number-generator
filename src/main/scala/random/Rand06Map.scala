@@ -1,5 +1,9 @@
 package random
 
+/*
+  Now we implement 'map' on our 'case class Random'.
+  Using 'map' we can simplify many of our random value generation functions.
+ */
 object Rand06Map extends App {
 
   println("\n----- Introducing 'map'")

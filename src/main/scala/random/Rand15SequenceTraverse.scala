@@ -6,6 +6,29 @@ import cats.syntax.apply._
 
 import scala.language.higherKinds
 
+/*
+  Deducing 'sequence' and 'traverse'
+
+  We create other implementations of 'rollDieNTimesX':
+
+  rollDieNTimes3: creates a List[Random[Int]] with each element referencing 'rollDie'
+      It then traverses that list running the Random for each element thus generating a new value between 1 and 6 inclusive
+      finally returning a List of die rolls (i.e. List[Int]) wrapped in a Random.
+
+  rollDieNTimes4: separates sequencing from list creation (mapping a List[Int] to List[Random[Int]].
+      It moves the foldRight into its own function 'sequenceRands'.
+      'sequenceRands' turns a List[Random[Int]] into a Random[List[Int]] (the sequence pattern).
+      This impl need two list traversals, one for the mapping and on for sequencing.
+
+  rollDieNTimes5: integrates mapping and sequencing into one traversal of a List[Int].
+      'traverseRands' takes a List[Int] and the mapping function Int => Random[Int] returning Random[List[Int]]
+
+  rollDieNTimes6: uses traverse, the generic version of 'traverseRands'.
+      'traverse' takes a List[A] and the mapping function A => Random[B] returning Random[List[B]]
+
+  rollDieNTimes7: uses 'sequence' the generic version of 'sequenceRands' (implemented with 'traverse' and the 'identity' function).
+      'sequence' takes a List[Random[A]] and returns a Random[List[B]]
+ */
 object Rand15SequenceTraverse extends App {
 
   println("\n----- Deducing 'sequence' and 'traverse'")

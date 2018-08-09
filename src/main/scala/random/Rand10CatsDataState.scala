@@ -5,6 +5,10 @@ import cats.data.State
 
 import scala.language.higherKinds
 
+/*
+  The State Monad is provide in cats.data.State.
+  In this example we remove our own impl of State and import cats.data.State instead.
+ */
 object Rand10CatsDataState extends App {
 
   println("\n----- Using the cats.data.State Monad")

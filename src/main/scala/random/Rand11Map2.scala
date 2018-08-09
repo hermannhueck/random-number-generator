@@ -5,6 +5,16 @@ import cats.data.State
 
 import scala.language.higherKinds
 
+/*
+  'map' uses a function 'A => B' to map a 'Random[A]' to a 'Random[B]'.
+  'map2' uses a function '(A, B) => C' to map a 'Random[A]' and a 'Random[B]' to a  a 'Random[C]'.
+
+  Here we provide two implementations of 'map2', one implemented with a for-comprehension
+  (i.e. 'map' and 'flatmap') the other one with a manual implementation withour using 'flatMap'.
+  Based on 'map2' we can also implement 'tuple2'.
+
+  With 'map2' and 'tuple2' we can easily improve 'nextIntPair' and 'rollDieNTimes2'.
+ */
 object Rand11Map2 extends App {
 
   println("\n----- Implementing and using a 'map2'")
@@ -39,14 +49,14 @@ object Rand11Map2 extends App {
 
 
     // map2 with flatMap
-    def map2_0[A, B, Z](ra: Random[A], rb: Random[B])(f: (A, B) => Z): Random[Z] =
+    def map2_0[A, B, C](ra: Random[A], rb: Random[B])(f: (A, B) => C): Random[C] =
       for {
         a <- ra
         b <- rb
       } yield f(a, b)
 
     // map2 without flatMap
-    def map2[A, B, Z](ra: Random[A], rb: Random[B])(f: (A, B) => Z): Random[Z] = State {
+    def map2[A, B, C](ra: Random[A], rb: Random[B])(f: (A, B) => C): Random[C] = State {
       rng => {
         val (r1, a) = ra.run(rng).value
         val (r2, b) = rb.run(r1).value

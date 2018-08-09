@@ -6,6 +6,10 @@ import cats.syntax.apply._
 
 import scala.language.higherKinds
 
+/*
+  'pure' is already defined in Cats Applicative.
+  Hence we can delete our impl of 'pure' and use 'Applicative.pure' instead.
+ */
 object Rand14ApplicativePure extends App {
 
   println("\n----- Replacing 'Random.pure' with Cats 'Applicative.pure'")

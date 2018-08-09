@@ -6,6 +6,9 @@ import cats.syntax.apply._
 
 import scala.language.higherKinds
 
+/*
+  This implementation step replaces 'map2' and 'tuple2' with 'mapN' and 'tupled' from Cats.
+ */
 object Rand12CatsMapN extends App {
 
   println("\n----- Replacing 'map2' with Cats 'mapN'")

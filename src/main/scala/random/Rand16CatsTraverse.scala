@@ -6,6 +6,12 @@ import cats.{Monad, Traverse}
 
 import scala.language.higherKinds
 
+/*
+  Using typeclass 'cats.Traverse'
+
+  'cats.Traverse' provides traversing and sequencing which I implemented myself.
+  In this step I replace the usage of my own impl by the usage of 'cats.Traverse.sequence' and 'cats.Traverse.traverse'.
+ */
 object Rand16CatsTraverse extends App {
 
   println("\n----- Using Cats 'Traverse.sequence' and 'Traverse.traverse'")

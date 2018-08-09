@@ -1,5 +1,9 @@
 package random
 
+/*
+  This impl step wraps seed generation in 'case class RNG(seed: Long)
+  This gives seed generation its own type and makes the client code more robust.
+ */
 object Rand03CaseClassRNG extends App {
 
   println("\n----- Wrapping seed generation in case class 'RNG'")

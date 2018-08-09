@@ -1,5 +1,10 @@
 package random
 
+/*
+  Methods to Functions:
+  Every random value generation method is refactored to a function of type: RNG => (RNG, Long)
+  Most def's can be turned into val's.
+ */
 object Rand04Functions extends App {
 
   println("\n----- Moving from methods to functions 'RNG => (RNG, A)'")

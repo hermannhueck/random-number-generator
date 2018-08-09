@@ -4,11 +4,18 @@ import cats.Monad
 
 import scala.language.higherKinds
 
+/*
+  The 'Random' Monad:                       case class Random[A](run: RNG => (RNG, A))
+  is a special impl of the State Monad:     case class State[S, A](run: S => (S, A))
+
+  In this implementation step we replace 'Random' by the more general State Monad
+  and define a type alias which maps Random to State:     type Random[A] = State[RNG, A]
+ */
 object Rand09AbstractingState extends App {
 
   println("\n----- Implementing and using a State Monad")
 
-  case class State[S, A](run: S => (S, A)) {
+  final case class State[S, A](run: S => (S, A)) {
 
     def runS: S => S = run(_)._1
 

@@ -1,5 +1,14 @@
 package random
 
+/*
+  Functions wrapped in a case class:
+  The functions 'RNG => (RNG, Long)' are now wrapped in to a 'case class Random[A](run: RNG => (RNG, Long))'.
+
+  This wrapping gives us a computational context which enables more functional abstractions
+  as we will see in the following steps.
+
+  The random value generation functions now return 'Random[A]' and I moved them to the 'Random' companion object.
+ */
 object Rand05CaseClassRandom extends App {
 
   println("\n----- Wrapping the functions 'RNG => (RNG, A)' in case class 'Random'")
@@ -8,9 +17,7 @@ object Rand05CaseClassRandom extends App {
 
   object Random {
 
-    val nextLong: Random[Long] = Random {
-      rng => rng.nextLong
-    }
+    val nextLong: Random[Long] = Random { rng => rng.nextLong }
 
     val nextInt: Random[Int] = Random {
       rng => {

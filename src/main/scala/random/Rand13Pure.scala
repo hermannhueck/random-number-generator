@@ -6,6 +6,16 @@ import cats.syntax.apply._
 
 import scala.language.higherKinds
 
+/*
+  In 'rollDieNTimes1' and 'rollDieNTimes2' we just list an empty List[Int] into a 'Random' context
+  in case the specified parameter 'times' is <= 0.
+
+  The 'pure' does exactly this. More general: 'pure' lifts any value A into a computational context
+  (here: Random[A] which is aliased to State[RNG, A]) which provides a minimal representation of that value.
+
+  Here we provide 'pure' for 'Random' and use it in 'rollDieNTimes1' and 'rollDieNTimes2'
+  where A is List[Int].
+ */
 object Rand13Pure extends App {
 
   println("\n----- Implementing and using 'Random.pure'")

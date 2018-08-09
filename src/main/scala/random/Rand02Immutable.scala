@@ -1,5 +1,12 @@
 package random
 
+/*
+  Immutable generation of pseudo-random values using my own implementation
+
+  The seed is the state of random value generation.
+  Each method takes a 'seed: Long' parameter and returns a '(Long, A)'
+  where the 1st tuple component is the new seed and the snd is the generated value of the respective type.
+ */
 object Rand02Immutable extends App {
 
   println("\n----- Immutable generation of pseudo-random values")

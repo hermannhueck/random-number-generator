@@ -1,5 +1,8 @@
 package random
 
+/*
+  Mutable generation of pseudo-random values using scala.util.Random
+ */
 object Rand01Mutable extends App {
 
   println("\n----- Mutable generation of pseudo-random values with 'scala.util.Random'")
