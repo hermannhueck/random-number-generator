@@ -1,9 +1,9 @@
 package random
 
+import cats.Monad
 import cats.data.State
-import cats.syntax.apply._
-import cats.{Monad, Traverse}
 import cats.instances.list._
+import cats.syntax.apply._
 import cats.syntax.traverse._
 
 import scala.language.higherKinds

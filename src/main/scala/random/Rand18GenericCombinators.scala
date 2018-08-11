@@ -7,7 +7,6 @@ import cats.syntax.apply._
 import cats.syntax.traverse._
 
 import scala.language.higherKinds
-import scala.language.implicitConversions
 
 /*
   In this step we go from Int pairs to generic pairs of type A and B.

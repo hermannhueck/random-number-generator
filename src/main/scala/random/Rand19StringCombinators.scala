@@ -1,12 +1,12 @@
 package random
 
-import cats.{Eval, Monad}
-import cats.data.{IndexedStateT, State}
+import cats.Monad
+import cats.data.State
 import cats.instances.list._
 import cats.syntax.apply._
 import cats.syntax.traverse._
 
-import scala.language.{higherKinds, implicitConversions}
+import scala.language.higherKinds
 
 /*
   This step adds random strings of various kinds.
