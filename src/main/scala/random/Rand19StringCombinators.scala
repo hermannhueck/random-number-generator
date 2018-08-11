@@ -13,7 +13,7 @@ import scala.language.{higherKinds, implicitConversions}
  */
 object Rand19StringCombinators extends App {
 
-  println("\n----- Using Cats 'Traverse.sequence' and 'Traverse.traverse'")
+  println("\n----- String Combinators")
 
   type Random[A] = State[RNG, A]
 

@@ -18,7 +18,7 @@ import scala.language.implicitConversions
  */
 object Rand18GenericCombinators extends App {
 
-  println("\n----- Using Cats 'Traverse.sequence' and 'Traverse.traverse'")
+  println("\n----- Generic Combinators")
 
   type Random[A] = State[RNG, A]
 
