@@ -21,40 +21,40 @@ object Rand16CatsTraverse extends App {
 
   object Random {
 
-    val nextLong: Random[Long] = State { rng => rng.nextLong }
+    val long: Random[Long] = State { rng => rng.nextLong }
 
-    val nextInt: Random[Int] =
-      nextLong map (l => (l >>> 16).toInt)
+    val int: Random[Int] =
+      long map (l => (l >>> 16).toInt)
 
     val nonNegativeInt: Random[Int] =
-      nextInt map (i => if (i < 0) -(i + 1) else i)
+      int map (i => if (i < 0) -(i + 1) else i)
 
-    val nextDouble: Random[Double] =
+    val double: Random[Double] =
       nonNegativeInt map (i => i / (Int.MaxValue.toDouble + 1))
 
-    val nextBoolean: Random[Boolean] =
-      nextInt map (i => i % 2 == 0)
+    val boolean: Random[Boolean] =
+      int map (i => i % 2 == 0)
 
-    val nextIntPair: Random[(Int, Int)] =
-      (nextInt, nextInt).tupled
+    val intPair: Random[(Int, Int)] =
+      (int, int).tupled
   }
 
 
   import Random._
 
   val rand: Random[(Int, Double, Boolean, (Int, Int))] = for { // program description: doesn't do anything!
-    int <- nextInt
-    double <- nextDouble
-    boolean <- nextBoolean
-    intPair <- nextIntPair
-  } yield (int, double, boolean, intPair)
+    i <- int
+    d <- double
+    b <- boolean
+    ip <- intPair
+  } yield (i, d, b, ip)
 
-  val (newRng, (int, double, boolean, intPair)) = rand.run(RNG(42)).value // program invocation
+  val (newRng, (i, d, b, ip)) = rand.run(RNG(42)).value // program invocation
 
-  println("random Int:     " + int)
-  println("random Double:  " + double)
-  println("random Boolean: " + boolean)
-  println("random IntPair: " + intPair)
+  println("random Int:     " + i)
+  println("random Double:  " + d)
+  println("random Boolean: " + b)
+  println("random IntPair: " + ip)
 
 
   println("----- Monadic Random ...")
@@ -85,17 +85,17 @@ object Rand16CatsTraverse extends App {
   import cats.instances.list._
   import cats.syntax.traverse._
 
-  def rollDieNTimes1(times: Int): Random[List[Int]] =
-    Traverse[List].sequence((0 until (0 max times)).toList map (_ => rollDie))
+  def rollDieNTimes1(n: Int): Random[List[Int]] =
+    Traverse[List].sequence((0 until (0 max n)).toList map (_ => rollDie))
 
-  def rollDieNTimes2(times: Int): Random[List[Int]] =
-    (0 until (0 max times)).toList.map(_ => rollDie).sequence
+  def rollDieNTimes2(n: Int): Random[List[Int]] =
+    (0 until (0 max n)).toList.map(_ => rollDie).sequence
 
-  def rollDieNTimes3(times: Int): Random[List[Int]] =
-    Traverse[List].traverse((0 until (0 max times)).toList)(_ => rollDie)
+  def rollDieNTimes3(n: Int): Random[List[Int]] =
+    Traverse[List].traverse((0 until (0 max n)).toList)(_ => rollDie)
 
-  def rollDieNTimes4(times: Int): Random[List[Int]] =
-    (0 until (0 max times)).toList traverse (_ => rollDie)
+  def rollDieNTimes4(n: Int): Random[List[Int]] =
+    (0 until (0 max n)).toList traverse (_ => rollDie)
 
 
   val rolled = for { // program description: doesn't do anything!

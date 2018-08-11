@@ -10,67 +10,69 @@ object Rand03CaseClassRNG extends App {
 
   println("\n----- Wrapping seed generation in case class 'RNG'")
 
-  def nextLong(rng: RNG): (RNG, Long) = rng.nextLong
+  def randomLong(rng: RNG): (RNG, Long) = rng.nextLong
 
-  def nextInt(rng: RNG): (RNG, Int) = {
-    val (r, long) = rng.nextLong
+  def randomInt(rng: RNG): (RNG, Int) = {
+    val (r, long) = randomLong(rng)
     (r, (long >>> 16).toInt)
   }
 
   def nonNegativeInt(rng: RNG): (RNG, Int) = {
-    val (newRng, i) = nextInt(rng)
+    val (newRng, i) = randomInt(rng)
     val nonNeg = if (i < 0) -(i + 1) else i
     (newRng, nonNeg)
   }
 
-  def nextDouble(rng: RNG): (RNG, Double) = {
+  def randomDouble(rng: RNG): (RNG, Double) = {
     val (newRng, i) = nonNegativeInt(rng)
     val d = i / (Int.MaxValue.toDouble + 1)
     (newRng, d)
   }
 
-  def nextBoolean(rng: RNG): (RNG, Boolean) = {
-    val (newRng, i) = nextInt(rng)
+  def randomBoolean(rng: RNG): (RNG, Boolean) = {
+    val (newRng, i) = randomInt(rng)
     (newRng, i % 2 == 0)
   }
 
-  def nextIntPair(rng: RNG): (RNG, (Int, Int)) = {
-    val (rng1, i1) = nextInt(rng)
-    val (rng2, i2) = nextInt(rng1)
+  def randomIntPair(rng: RNG): (RNG, (Int, Int)) = {
+    val (rng1, i1) = randomInt(rng)
+    val (rng2, i2) = randomInt(rng1)
     (rng2, (i1, i2))
   }
 
 
   val rng0 = RNG(42)
-  val (rng1, int) = nextInt(rng0)
-  val (rng2, double) = nextDouble(rng1)
-  val (rng3, boolean) = nextBoolean(rng2)
-  val (rng4, intPair) = nextIntPair(rng3)
+  val (rng1, i) = randomInt(rng0)
+  val (rng2, d) = randomDouble(rng1)
+  val (rng3, b) = randomBoolean(rng2)
+  val (rng4, ip) = randomIntPair(rng3)
 
-  println("random Int:     " + int)
-  println("random Double:  " + double)
-  println("random Boolean: " + boolean)
-  println("random IntPair: " + intPair)
+  println("random Int:     " + i)
+  println("random Double:  " + d)
+  println("random Boolean: " + b)
+  println("random IntPair: " + ip)
 
+
+  println("----- Rolling dies ...")
 
   def rollDie(rng: RNG): (RNG, Int) = {
-    val (newRng, int) = nonNegativeInt(rng)
-    (newRng, 1 + int % 6)
+    val (newRng, i) = nonNegativeInt(rng)
+    (newRng, 1 + i % 6)
   }
 
-  def rollDieNTimes(times: Int)(rng: RNG): (RNG, List[Int]) = {
-    if (times <= 0)
+  def rollDieNTimes(n: Int)(rng: RNG): (RNG, List[Int]) = {
+    if (n <= 0)
       (rng, List.empty[Int])
     else {
       val (r1, x) = rollDie(rng)
-      val (r2, xs) = rollDieNTimes(times-1)(r1)
+      val (r2, xs) = rollDieNTimes(n-1)(r1)
       (r2, x :: xs)
     }
   }
 
 
   val (rng5, rolled) = rollDieNTimes(20)(rng4)
-  println(  "Rolled die 20 times: " + rolled  )
+  println("Rolled die 20 times: " + rolled)
 
   println("-----\n")
 }

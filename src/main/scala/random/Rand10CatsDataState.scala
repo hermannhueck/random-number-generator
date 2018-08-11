@@ -17,24 +17,24 @@ object Rand10CatsDataState extends App {
 
   object Random {
 
-    val nextLong: Random[Long] = State { rng => rng.nextLong }
+    val long: Random[Long] = State { rng => rng.nextLong }
 
-    val nextInt: Random[Int] =
-      nextLong map (l => (l >>> 16).toInt)
+    val int: Random[Int] =
+      long map (l => (l >>> 16).toInt)
 
     val nonNegativeInt: Random[Int] =
-      nextInt map (i => if (i < 0) -(i + 1) else i)
+      int map (i => if (i < 0) -(i + 1) else i)
 
-    val nextDouble: Random[Double] =
+    val double: Random[Double] =
       nonNegativeInt map (i => i / (Int.MaxValue.toDouble + 1))
 
-    val nextBoolean: Random[Boolean] =
-      nextInt map (i => i % 2 == 0)
+    val boolean: Random[Boolean] =
+      int map (i => i % 2 == 0)
 
-    val nextIntPair: Random[(Int, Int)] =
+    val intPair: Random[(Int, Int)] =
       for {
-        i1 <- nextInt
-        i2 <- nextInt
+        i1 <- int
+        i2 <- int
       } yield (i1, i2)
   }
 
@@ -42,18 +42,18 @@ object Rand10CatsDataState extends App {
   import Random._
 
   val rand: Random[(Int, Double, Boolean, (Int, Int))] = for { // program description: doesn't do anything!
-    int <- nextInt
-    double <- nextDouble
-    boolean <- nextBoolean
-    intPair <- nextIntPair
-  } yield (int, double, boolean, intPair)
+    i <- int
+    d <- double
+    b <- boolean
+    ip <- intPair
+  } yield (i, d, b, ip)
 
-  val (newRng, (int, double, boolean, intPair)) = rand.run(RNG(42)).value // program invocation
+  val (newRng, (i, d, b, ip)) = rand.run(RNG(42)).value // program invocation
 
-  println("random Int:     " + int)
-  println("random Double:  " + double)
-  println("random Boolean: " + boolean)
-  println("random IntPair: " + intPair)
+  println("random Int:     " + i)
+  println("random Double:  " + d)
+  println("random Boolean: " + b)
+  println("random IntPair: " + ip)
 
 
   println("----- Monadic Random ...")
@@ -81,22 +81,22 @@ object Rand10CatsDataState extends App {
 
   println("----- Rolling dies ...")
 
-  def rollDieNTimes1(times: Int): Random[List[Int]] =
-    if (times <= 0)
+  def rollDieNTimes1(n: Int): Random[List[Int]] =
+    if (n <= 0)
       State { rng => (rng, List.empty[Int]) }
     else
       State { rng =>
         val (r1, x) = rollDie.run(rng).value
-        val (r2, xs) = rollDieNTimes1(times-1).run(r1).value
+        val (r2, xs) = rollDieNTimes1(n-1).run(r1).value
         (r2, x :: xs)
       }
 
-  def rollDieNTimes2(times: Int): Random[List[Int]] =
-    if (times <= 0)
+  def rollDieNTimes2(n: Int): Random[List[Int]] =
+    if (n <= 0)
       State { rng => (rng, List.empty[Int]) }
     else for {
       x <- rollDie
-      xs <- rollDieNTimes2(times-1)
+      xs <- rollDieNTimes2(n-1)
     } yield x :: xs
 
 
