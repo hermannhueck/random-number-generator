@@ -1,9 +1,10 @@
 package libRandom
 
+import cats.{Applicative, Traverse}
 import cats.data.State
 import cats.instances.list._
 import cats.syntax.apply._
-import cats.syntax.traverse._
+//import cats.syntax.traverse._
 
 object Random {
 
@@ -97,8 +98,14 @@ object Random {
   def triple[A, B, C](randA: Random[A], randB: Random[B], randC: Random[C]): Random[(A, B, C)] =
     (randA, randB, randC).tupled
 
+  def traverse[A, B](as: List[A])(f: A => Random[B]): Random[List[B]] =
+    Traverse[List].traverse(as)(f)
+
+  def sequence[A](as: List[Random[A]]): Random[List[A]] =
+    traverse(as)(identity)
+
   def listOf[A](n: Int)(rand: Random[A]): Random[List[A]] =
-    (0 until (0 max n)).toList traverse (_ => rand)
+    traverse((0 until (0 max n)).toList)(_ => rand)
 
   def ints(n: Int): Random[List[Int]] =
     listOf(n)(int)
@@ -155,4 +162,9 @@ object Random {
 
   def numericString(n: Int): Random[String] =
     listOf(n)(numericChar) map (_.mkString)
+
+  def pure[A](a: A): Random[A] =
+    Applicative[Random].pure[A](a)
+
+  def unit[A](a: A): Random[A] = pure(a)
 }

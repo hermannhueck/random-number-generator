@@ -1,10 +1,9 @@
 package random
 
-import cats.Monad
+import cats.{Monad, Traverse}
 import cats.data.State
 import cats.instances.list._
 import cats.syntax.apply._
-import cats.syntax.traverse._
 import libRandom.RNG
 
 import scala.language.higherKinds
@@ -112,8 +111,14 @@ object Rand18GenericCombinators extends App {
     def triple[A, B, C](randA: Random[A], randB: Random[B], randC: Random[C]): Random[(A, B, C)] =
       (randA, randB, randC).tupled
 
+    def traverse[A, B](as: List[A])(f: A => Random[B]): Random[List[B]] =
+      Traverse[List].traverse(as)(f)
+
+    def sequence[A](as: List[Random[A]]): Random[List[A]] =
+      traverse(as)(identity)
+
     def listOf[A](n: Int)(rand: Random[A]): Random[List[A]] =
-      (0 until (0 max n)).toList traverse (_ => rand)
+      traverse((0 until (0 max n)).toList)(_ => rand)
 
     def ints(n: Int): Random[List[Int]] =
       listOf(n)(int)
