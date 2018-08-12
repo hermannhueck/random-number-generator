@@ -1,5 +1,7 @@
 package random
 
+import libRandom.RNG
+
 /*
   Now we implement 'map' on our 'case class Random'.
   Using 'map' we can simplify many of our random value generation functions.

@@ -1,5 +1,7 @@
 package random
 
+import libRandom.RNG
+
 /*
   Functions wrapped in a case class:
   The functions 'RNG => (RNG, Long)' are now wrapped in to a 'case class Random[A](run: RNG => (RNG, Long))'.

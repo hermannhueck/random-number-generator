@@ -3,6 +3,7 @@ package random
 import cats.data.State
 import cats.syntax.apply._
 import cats.{Monad, Traverse}
+import libRandom.RNG
 
 import scala.language.higherKinds
 

@@ -1,5 +1,7 @@
 package random
 
+import libRandom.RNG
+
 /*
   This impl step wraps seed generation in 'case class RNG(seed: Long)
   This gives seed generation its own type and makes the client code more robust.

@@ -1,5 +1,7 @@
 package random
 
+import libRandom.RNG
+
 /*
   Methods to Functions:
   Every random value generation method is refactored to a function of type: RNG => (RNG, Long)

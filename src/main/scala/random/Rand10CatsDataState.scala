@@ -2,6 +2,7 @@ package random
 
 import cats.Monad
 import cats.data.State
+import libRandom.RNG
 
 import scala.language.higherKinds
 

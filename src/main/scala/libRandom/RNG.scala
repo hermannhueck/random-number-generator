@@ -1,4 +1,4 @@
-package random
+package libRandom
 
 case class RNG(seed: Long) {
 

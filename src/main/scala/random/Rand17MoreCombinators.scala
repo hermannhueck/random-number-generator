@@ -5,6 +5,7 @@ import cats.data.State
 import cats.instances.list._
 import cats.syntax.apply._
 import cats.syntax.traverse._
+import libRandom.RNG
 
 import scala.language.higherKinds
 
@@ -26,17 +27,22 @@ object Rand17MoreCombinators extends App {
       long map (l => (l >>> 16).toInt)
 
     def intFromUntil(lowInclusive: Int, highExclusive: Int): Random[Int] = {
+
       val (low, high) =
-        if (lowInclusive <= highExclusive) (lowInclusive, highExclusive)
-        else (highExclusive, lowInclusive) // flip values if highExclusive < lowInclusive
+        if (lowInclusive <= highExclusive)
+          (lowInclusive, highExclusive)
+        else
+          (highExclusive, lowInclusive) // flip values if highExclusive < lowInclusive
+
       val diff = high - low
+
       if (diff == 0)
         int map (_ => low)
       else {
-          // The result is only correct as long as diff <= Int.MaxValue.
-          // That is good enough for our demo purposes.
-          int map { i => Math.abs(i % diff) + low }
-        }
+        // The result is only correct as long as diff <= Int.MaxValue.
+        // That is good enough for our demo purposes.
+        int map { i => Math.abs(i % diff) + low }
+      }
     }
 
     def intFromTo(lowInclusive: Int, highInclusive: Int): Random[Int] =

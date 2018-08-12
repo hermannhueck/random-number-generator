@@ -1,6 +1,7 @@
 package random
 
 import cats.Monad
+import libRandom.RNG
 
 import scala.language.higherKinds
 
