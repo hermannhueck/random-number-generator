@@ -1,4 +1,4 @@
-package random
+package random04
 
 import libRandom.RNG
 
@@ -20,13 +20,13 @@ object Rand04Functions extends App {
 
   val nonNegativeInt: RNG => (RNG, Int) = rng => {
     val (newRng, i) = randomInt(rng)
-    val nonNeg = if (i < 0) -(i + 1) else i
+    val nonNeg      = if (i < 0) -(i + 1) else i
     (newRng, nonNeg)
   }
 
   val randomDouble: RNG => (RNG, Double) = rng => {
     val (newRng, i) = nonNegativeInt(rng)
-    val d = i / (Int.MaxValue.toDouble + 1)
+    val d           = i / (Int.MaxValue.toDouble + 1)
     (newRng, d)
   }
 
@@ -41,18 +41,16 @@ object Rand04Functions extends App {
     (rng2, (i1, i2))
   }
 
-
-  val rng0 = RNG(42)
-  val (rng1, i) = randomInt(rng0)
-  val (rng2, d) = randomDouble(rng1)
-  val (rng3, b) = randomBoolean(rng2)
+  val rng0       = RNG(42)
+  val (rng1, i)  = randomInt(rng0)
+  val (rng2, d)  = randomDouble(rng1)
+  val (rng3, b)  = randomBoolean(rng2)
   val (rng4, ip) = randomIntPair(rng3)
 
   println("random Int:     " + i)
   println("random Double:  " + d)
   println("random Boolean: " + b)
   println("random IntPair: " + ip)
-
 
   println("----- Rolling dies ...")
 
@@ -65,15 +63,14 @@ object Rand04Functions extends App {
     if (n <= 0)
       (rng, List.empty[Int])
     else {
-      val (r1, x) = rollDie(rng)
-      val (r2, xs) = rollDieNTimes(n-1)(r1)
+      val (r1, x)  = rollDie(rng)
+      val (r2, xs) = rollDieNTimes(n - 1)(r1)
       (r2, x :: xs)
     }
   }
 
-
   val (rng5, rolled) = rollDieNTimes(20)(rng4)
-  println(  "Rolled die 20 times: " + rolled  )
+  println("Rolled die 20 times: " + rolled)
 
   println("-----\n")
 }

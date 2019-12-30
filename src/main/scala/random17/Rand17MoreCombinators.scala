@@ -1,28 +1,27 @@
-package random
+package random17
 
-import cats.{Monad, Traverse}
+import cats.Monad
 import cats.data.State
 import cats.instances.list._
 import cats.syntax.apply._
+import cats.syntax.traverse._
 import libRandom.RNG
 
-
 /*
-  In this step we go from Int pairs to generic pairs of type A and B.
-  Accordingly we can write generic triples (and other tuples if we like).
-  We can also build generic random lists with 'listOf(n: Int)(rand: Random[A])'.
-  'oneOf' allows us to randomly select one element of a given list.
-  'nOf' combines 'listOf' and 'oneOf' to randomly select n elements of a given list.
+  Having constucted the basic functional structure of random value generation
+  we can develop more combinators based on the existing ones.
  */
-object Rand18GenericCombinators extends App {
+object Rand17MoreCombinators extends App {
 
-  println("\n----- Generic Combinators")
+  println("\n----- More Combinators")
 
   type Random[A] = State[RNG, A]
 
   object Random {
 
-    val long: Random[Long] = State { rng => rng.nextLong }
+    val long: Random[Long] = State { rng =>
+      rng.nextLong
+    }
 
     val int: Random[Int] =
       long map (l => (l >>> 16).toInt)
@@ -42,7 +41,9 @@ object Rand18GenericCombinators extends App {
       else {
         // The result is only correct as long as diff <= Int.MaxValue.
         // That is good enough for our demo purposes.
-        int map { i => Math.abs(i % diff) + low }
+        int map { i =>
+          Math.abs(i % diff) + low
+        }
       }
     }
 
@@ -104,61 +105,43 @@ object Rand18GenericCombinators extends App {
     val boolean: Random[Boolean] =
       int map (i => i % 2 == 0)
 
-    def pair[A, B](randA: Random[A], randB: Random[B]): Random[(A, B)] =
-      (randA, randB).tupled
+    val intPair: Random[(Int, Int)] =
+      (int, int).tupled
 
-    def triple[A, B, C](randA: Random[A], randB: Random[B], randC: Random[C]): Random[(A, B, C)] =
-      (randA, randB, randC).tupled
+    val intDoublePair: Random[(Int, Double)] =
+      (int, double).tupled
 
-    def traverse[A, B](as: List[A])(f: A => Random[B]): Random[List[B]] =
-      Traverse[List].traverse(as)(f)
+    val doubleIntPair: Random[(Double, Int)] =
+      (double, int).tupled
 
-    def sequence[A](as: List[Random[A]]): Random[List[A]] =
-      traverse(as)(identity)
+    val doublePair: Random[(Double, Double)] =
+      (double, double).tupled
 
-    def listOf[A](n: Int)(rand: Random[A]): Random[List[A]] =
-      traverse((0 until (0 max n)).toList)(_ => rand)
+    val intTriple: Random[(Int, Int, Int)] =
+      (int, int, int).tupled
 
     def ints(n: Int): Random[List[Int]] =
-      listOf(n)(int)
+      (0 until (0 max n)).toList traverse (_ => int)
 
     def doubles(n: Int): Random[List[Double]] =
-      listOf(n)(double)
-
-    def oneOf[A](seq: A*): Random[A] =
-      intFromUntil(0, seq.length) map (index => seq(index))
-
-    def nOf[A](n: Int)(seq: A*): Random[List[A]] =
-      listOf(n)(oneOf(seq: _*))
+      (0 until (0 max n)).toList traverse (_ => double)
   }
-
 
   import Random._
 
-  val rand = for { // program description: doesn't do anything!
-    i <- int
-    d <- double
-    b <- boolean
-    pi <- pair(int, int)
-    ti <- triple(int, int, int)
-    li <- ints(10)
-    ld <- doubles(10)
-    onei <- oneOf((0 until 9) map (_ * 10): _*)
-    ni <- nOf(20)(0, 10, 20, 30, 40, 50, 60, 70, 80, 90)
-  } yield (i, d, b, pi, ti, li, ld, onei, ni)
+  val rand: Random[(Int, Double, Boolean, (Int, Int))] = for { // program description: doesn't do anything!
+    i  <- int
+    d  <- double
+    b  <- boolean
+    ip <- intPair
+  } yield (i, d, b, ip)
 
-  val (newRng, (i, d, b, pi, ti, li, ld, onei, ni)) = rand.run(RNG(42)).value // program invocation
+  val (newRng, (i, d, b, ip)) = rand.run(RNG(42)).value // program invocation
 
-  println("random Int:          " + i)
-  println("random Double:       " + d)
-  println("random Boolean:      " + b)
-  println("random IntPair:      " + pi)
-  println("random IntTriple:    " + ti)
-  println("random IntList:      " + li)
-  println("random DoubleList:   " + ld)
-  println("random oneOf(...):   " + onei)
-  println("random nOf(20)(...): " + ni)
-
+  println("random Int:     " + i)
+  println("random Double:  " + d)
+  println("random Boolean: " + b)
+  println("random IntPair: " + ip)
 
   println("----- Monadic Random ...")
 
@@ -168,10 +151,11 @@ object Rand18GenericCombinators extends App {
   import cats.syntax.flatMap._
   import cats.syntax.functor._
 
-  def sumOfSquares[F[_]: Monad](mi1: F[Int], mi2: F[Int]): F[Int] = for {
-    i1 <- mi1
-    i2 <- mi2
-  } yield i1 * i1 + i2 * i2
+  def sumOfSquares[F[_]: Monad](mi1: F[Int], mi2: F[Int]): F[Int] =
+    for {
+      i1 <- mi1
+      i2 <- mi2
+    } yield i1 * i1 + i2 * i2
 
   import cats.instances.option._
 
@@ -179,15 +163,13 @@ object Rand18GenericCombinators extends App {
   println(s"sumOfSquares[Option]: $optionResult")
 
   private val random = sumOfSquares(rollDie, rollDie)
-  val randomResult = random.runA(RNG(42)).value
+  val randomResult   = random.runA(RNG(42)).value
   println(s"sumOfSquares[Random]: $randomResult")
-
 
   println("----- Rolling dies ...")
 
   def rollDieNTimes(n: Int): Random[List[Int]] =
-    listOf(n)(rollDie)
-
+    (0 until (0 max n)).toList traverse (_ => rollDie)
 
   val rolled = rollDieNTimes(20).runA(newRng).value
   println("Rolled die 20 times: " + rolled)

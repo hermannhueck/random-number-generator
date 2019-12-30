@@ -1,10 +1,9 @@
-package random
+package random14
 
 import cats.{Applicative, Monad}
 import cats.data.State
 import cats.syntax.apply._
 import libRandom.RNG
-
 
 /*
   'pure' is already defined in Cats Applicative.
@@ -18,7 +17,9 @@ object Rand14ApplicativePure extends App {
 
   object Random {
 
-    val long: Random[Long] = State { rng => rng.nextLong }
+    val long: Random[Long] = State { rng =>
+      rng.nextLong
+    }
 
     val int: Random[Int] =
       long map (l => (l >>> 16).toInt)
@@ -36,13 +37,12 @@ object Rand14ApplicativePure extends App {
       (int, int).tupled
   }
 
-
   import Random._
 
   val rand: Random[(Int, Double, Boolean, (Int, Int))] = for { // program description: doesn't do anything!
-    i <- int
-    d <- double
-    b <- boolean
+    i  <- int
+    d  <- double
+    b  <- boolean
     ip <- intPair
   } yield (i, d, b, ip)
 
@@ -53,7 +53,6 @@ object Rand14ApplicativePure extends App {
   println("random Boolean: " + b)
   println("random IntPair: " + ip)
 
-
   println("----- Monadic Random ...")
 
   val rollDie: Random[Int] =
@@ -62,10 +61,11 @@ object Rand14ApplicativePure extends App {
   import cats.syntax.functor._
   import cats.syntax.flatMap._
 
-  def sumOfSquares[F[_]: Monad](mi1: F[Int], mi2: F[Int]): F[Int] = for {
-    i1 <- mi1
-    i2 <- mi2
-  } yield i1 * i1 + i2 * i2
+  def sumOfSquares[F[_]: Monad](mi1: F[Int], mi2: F[Int]): F[Int] =
+    for {
+      i1 <- mi1
+      i2 <- mi2
+    } yield i1 * i1 + i2 * i2
 
   import cats.instances.option._
 
@@ -73,9 +73,8 @@ object Rand14ApplicativePure extends App {
   println(s"sumOfSquares[Option]: $optionResult")
 
   private val random = sumOfSquares(rollDie, rollDie)
-  val randomResult = random.runA(RNG(42))
+  val randomResult   = random.runA(RNG(42))
   println(s"sumOfSquares[Random]: $randomResult")
-
 
   println("----- Rolling dies ...")
 
@@ -84,8 +83,8 @@ object Rand14ApplicativePure extends App {
       Applicative[Random].pure[List[Int]](List.empty[Int])
     else
       State { rng =>
-        val (r1, x) = rollDie.run(rng).value
-        val (r2, xs) = rollDieNTimes1(n-1).run(r1).value
+        val (r1, x)  = rollDie.run(rng).value
+        val (r2, xs) = rollDieNTimes1(n - 1).run(r1).value
         (r2, x :: xs)
       }
 
@@ -95,8 +94,7 @@ object Rand14ApplicativePure extends App {
     if (n <= 0)
       List.empty[Int].pure[Random]
     else
-      (rollDie, rollDieNTimes2(n-1)) mapN (_ :: _)
-
+      (rollDie, rollDieNTimes2(n - 1)) mapN (_ :: _)
 
   val rolled: Random[(List[Int], List[Int])] = for { // program description: doesn't do anything!
     rolled1 <- rollDieNTimes1(20)

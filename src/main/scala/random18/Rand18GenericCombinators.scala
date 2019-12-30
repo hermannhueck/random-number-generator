@@ -1,4 +1,4 @@
-package random
+package random18
 
 import cats.{Monad, Traverse}
 import cats.data.State
@@ -6,19 +6,24 @@ import cats.instances.list._
 import cats.syntax.apply._
 import libRandom.RNG
 
-
 /*
-  This step adds random strings of various kinds.
+  In this step we go from Int pairs to generic pairs of type A and B.
+  Accordingly we can write generic triples (and other tuples if we like).
+  We can also build generic random lists with 'listOf(n: Int)(rand: Random[A])'.
+  'oneOf' allows us to randomly select one element of a given list.
+  'nOf' combines 'listOf' and 'oneOf' to randomly select n elements of a given list.
  */
-object Rand19StringCombinators extends App {
+object Rand18GenericCombinators extends App {
 
-  println("\n----- String Combinators")
+  println("\n----- Generic Combinators")
 
   type Random[A] = State[RNG, A]
 
   object Random {
 
-    val long: Random[Long] = State { rng => rng.nextLong }
+    val long: Random[Long] = State { rng =>
+      rng.nextLong
+    }
 
     val int: Random[Int] =
       long map (l => (l >>> 16).toInt)
@@ -38,7 +43,9 @@ object Rand19StringCombinators extends App {
       else {
         // The result is only correct as long as diff <= Int.MaxValue.
         // That is good enough for our demo purposes.
-        int map { i => Math.abs(i % diff) + low }
+        int map { i =>
+          Math.abs(i % diff) + low
+        }
       }
     }
 
@@ -126,75 +133,23 @@ object Rand19StringCombinators extends App {
 
     def nOf[A](n: Int)(seq: A*): Random[List[A]] =
       listOf(n)(oneOf(seq: _*))
-
-    val char: Random[Char] =
-      int map (_.toChar)
-
-    val ansiChar: Random[Char] =
-      intFromUntil(0, 256) map (_.toChar)
-
-    val asciiChar: Random[Char] =
-      intFromUntil(0, 128) map (_.toChar)
-
-    private val asciiChars: List[Char] = (0 until 127).toList.map(_.toChar)
-    private val alphaNumChars: List[Char] = asciiChars.filter(_.isLetterOrDigit)
-    private val letters: List[Char] = asciiChars.filter(_.isLetter)
-    private val digits: List[Char] = asciiChars.filter(_.isDigit)
-
-    val alphaNumChar: Random[Char] =
-      oneOf(alphaNumChars: _*)
-
-    val alphaChar: Random[Char] =
-      oneOf(letters: _*)
-
-    val numericChar: Random[Char] =
-      oneOf(digits: _*)
-
-    def chars(n: Int): Random[List[Char]] =
-      listOf(n)(char)
-
-    def string(n: Int): Random[String] =
-      chars(n) map (_.mkString)
-
-    def ansiString(n: Int): Random[String] =
-      listOf(n)(ansiChar) map (_.mkString)
-
-    def asciiString(n: Int): Random[String] =
-      listOf(n)(asciiChar) map (_.mkString)
-
-    def alphaNumString(n: Int): Random[String] =
-      listOf(n)(alphaNumChar) map (_.mkString)
-
-    def alphaString(n: Int): Random[String] =
-      listOf(n)(alphaChar) map (_.mkString)
-
-    def numericString(n: Int): Random[String] =
-      listOf(n)(numericChar) map (_.mkString)
   }
-
 
   import Random._
 
   val rand = for { // program description: doesn't do anything!
-    i <- int
-    d <- double
-    b <- boolean
-    pi <- pair(int, int)
-    ti <- triple(int, int, int)
-    li <- ints(10)
-    ld <- doubles(10)
+    i    <- int
+    d    <- double
+    b    <- boolean
+    pi   <- pair(int, int)
+    ti   <- triple(int, int, int)
+    li   <- ints(10)
+    ld   <- doubles(10)
     onei <- oneOf((0 until 9) map (_ * 10): _*)
-    ni <- nOf(20)(0, 10, 20, 30, 40, 50, 60, 70, 80, 90)
-    cs <- chars(20)
-    s <- string(20)
-    ansi <- ansiString(20)
-    ascii <- asciiString(20)
-    alphaNum <- alphaNumString(80)
-    alpha <- alphaString(20)
-    num <- numericString(20)
-  } yield (i, d, b, pi, ti, li, ld, onei, ni, cs, s, ansi, ascii, alphaNum, alpha, num)
+    ni   <- nOf(20)(0, 10, 20, 30, 40, 50, 60, 70, 80, 90)
+  } yield (i, d, b, pi, ti, li, ld, onei, ni)
 
-  val (newRng, (i, d, b, pi, ti, li, ld, onei, ni, cs, s, ansi, ascii, alphaNum, alpha, num)) = rand.run(RNG(42)).value // program invocation
+  val (newRng, (i, d, b, pi, ti, li, ld, onei, ni)) = rand.run(RNG(42)).value // program invocation
 
   println("random Int:          " + i)
   println("random Double:       " + d)
@@ -205,14 +160,6 @@ object Rand19StringCombinators extends App {
   println("random DoubleList:   " + ld)
   println("random oneOf(...):   " + onei)
   println("random nOf(20)(...): " + ni)
-  println("random chars:        " + cs)
-  println("random String:       " + s)
-  println("random ANSI String:  " + ansi)
-  println("random ASCII String: " + ascii)
-  println("random alphaNum String: " + alphaNum)
-  println("random alpha String: " + alpha)
-  println("random numeric String: " + num)
-
 
   println("----- Monadic Random ...")
 
@@ -222,10 +169,11 @@ object Rand19StringCombinators extends App {
   import cats.syntax.flatMap._
   import cats.syntax.functor._
 
-  def sumOfSquares[F[_]: Monad](mi1: F[Int], mi2: F[Int]): F[Int] = for {
-    i1 <- mi1
-    i2 <- mi2
-  } yield i1 * i1 + i2 * i2
+  def sumOfSquares[F[_]: Monad](mi1: F[Int], mi2: F[Int]): F[Int] =
+    for {
+      i1 <- mi1
+      i2 <- mi2
+    } yield i1 * i1 + i2 * i2
 
   import cats.instances.option._
 
@@ -233,15 +181,13 @@ object Rand19StringCombinators extends App {
   println(s"sumOfSquares[Option]: $optionResult")
 
   private val random = sumOfSquares(rollDie, rollDie)
-  val randomResult = random.runA(RNG(42)).value
+  val randomResult   = random.runA(RNG(42)).value
   println(s"sumOfSquares[Random]: $randomResult")
-
 
   println("----- Rolling dies ...")
 
   def rollDieNTimes(n: Int): Random[List[Int]] =
     listOf(n)(rollDie)
-
 
   val rolled = rollDieNTimes(20).runA(newRng).value
   println("Rolled die 20 times: " + rolled)

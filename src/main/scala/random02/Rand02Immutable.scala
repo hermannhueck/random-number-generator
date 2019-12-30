@@ -1,4 +1,4 @@
-package random
+package random02
 
 /*
   Immutable generation of pseudo-random values using my own implementation
@@ -30,17 +30,17 @@ object Rand02Immutable extends App {
   def randomInt(seed: Long): (Long, Int) = {
     val (newSeed, long) = randomLong(seed)
     (newSeed, (long >>> 16).toInt) // `>>>` is right binary shift with zero fill. The value `n` is our new pseudo-random integer.
-  } // The return value is a tuple containing both a pseudo-random integer and the next `RNG` state.
+  }                                // The return value is a tuple containing both a pseudo-random integer and the next `RNG` state.
 
   def nonNegativeInt(seed: Long): (Long, Int) = {
     val (newSeed, i) = randomInt(seed)
-    val nonNeg = if (i < 0) -(i + 1) else i
+    val nonNeg       = if (i < 0) -(i + 1) else i
     (newSeed, nonNeg)
   }
 
   def randomDouble(seed: Long): (Long, Double) = {
     val (newSeed, i) = nonNegativeInt(seed)
-    val d = i / (Int.MaxValue.toDouble + 1)
+    val d            = i / (Int.MaxValue.toDouble + 1)
     (newSeed, d)
   }
 
@@ -55,18 +55,16 @@ object Rand02Immutable extends App {
     (seed2, (i1, i2))
   }
 
-
-  val s0 = 42
-  val (s1, i) = randomInt(s0)
-  val (s2, d) = randomDouble(s1)
-  val (s3, b) = randomBoolean(s2)
+  val s0       = 42
+  val (s1, i)  = randomInt(s0)
+  val (s2, d)  = randomDouble(s1)
+  val (s3, b)  = randomBoolean(s2)
   val (s4, ip) = randomIntPair(s3)
 
   println("random Int:     " + i)
   println("random Double:  " + d)
   println("random Boolean: " + b)
   println("random IntPair: " + ip)
-
 
   println("----- Rolling dies ...")
 
@@ -79,12 +77,11 @@ object Rand02Immutable extends App {
     if (n <= 0)
       (seed, List.empty[Int])
     else {
-      val (s1, x) = rollDie(seed)
-      val (s2, xs) = rollDieNTimes(n-1)(s1)
+      val (s1, x)  = rollDie(seed)
+      val (s2, xs) = rollDieNTimes(n - 1)(s1)
       (s2, x :: xs)
     }
   }
-
 
   val (s5, rolled) = rollDieNTimes(20)(s4)
   println("Rolled die 20 times: " + rolled)

@@ -1,10 +1,9 @@
-package random
+package random16
 
 import cats.data.State
 import cats.syntax.apply._
 import cats.{Monad, Traverse}
 import libRandom.RNG
-
 
 /*
   Using typeclass 'cats.Traverse'
@@ -21,7 +20,9 @@ object Rand16CatsTraverse extends App {
 
   object Random {
 
-    val long: Random[Long] = State { rng => rng.nextLong }
+    val long: Random[Long] = State { rng =>
+      rng.nextLong
+    }
 
     val int: Random[Int] =
       long map (l => (l >>> 16).toInt)
@@ -39,13 +40,12 @@ object Rand16CatsTraverse extends App {
       (int, int).tupled
   }
 
-
   import Random._
 
   val rand: Random[(Int, Double, Boolean, (Int, Int))] = for { // program description: doesn't do anything!
-    i <- int
-    d <- double
-    b <- boolean
+    i  <- int
+    d  <- double
+    b  <- boolean
     ip <- intPair
   } yield (i, d, b, ip)
 
@@ -56,7 +56,6 @@ object Rand16CatsTraverse extends App {
   println("random Boolean: " + b)
   println("random IntPair: " + ip)
 
-
   println("----- Monadic Random ...")
 
   val rollDie: Random[Int] =
@@ -65,10 +64,11 @@ object Rand16CatsTraverse extends App {
   import cats.syntax.functor._
   import cats.syntax.flatMap._
 
-  def sumOfSquares[F[_]: Monad](mi1: F[Int], mi2: F[Int]): F[Int] = for {
-    i1 <- mi1
-    i2 <- mi2
-  } yield i1 * i1 + i2 * i2
+  def sumOfSquares[F[_]: Monad](mi1: F[Int], mi2: F[Int]): F[Int] =
+    for {
+      i1 <- mi1
+      i2 <- mi2
+    } yield i1 * i1 + i2 * i2
 
   import cats.instances.option._
 
@@ -76,9 +76,8 @@ object Rand16CatsTraverse extends App {
   println(s"sumOfSquares[Option]: $optionResult")
 
   private val random = sumOfSquares(rollDie, rollDie)
-  val randomResult = random.runA(RNG(42))
+  val randomResult   = random.runA(RNG(42))
   println(s"sumOfSquares[Random]: $randomResult")
-
 
   println("----- Rolling dies ...")
 
@@ -96,7 +95,6 @@ object Rand16CatsTraverse extends App {
 
   def rollDieNTimes4(n: Int): Random[List[Int]] =
     (0 until (0 max n)).toList traverse (_ => rollDie)
-
 
   val rolled = for { // program description: doesn't do anything!
     rolled1 <- rollDieNTimes1(20)

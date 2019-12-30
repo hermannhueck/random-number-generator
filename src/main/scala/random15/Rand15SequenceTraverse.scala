@@ -1,10 +1,9 @@
-package random
+package random15
 
 import cats.{Applicative, Monad}
 import cats.data.State
 import cats.syntax.apply._
 import libRandom.RNG
-
 
 /*
   Deducing 'sequence' and 'traverse'
@@ -37,7 +36,9 @@ object Rand15SequenceTraverse extends App {
 
   object Random {
 
-    val long: Random[Long] = State { rng => rng.nextLong }
+    val long: Random[Long] = State { rng =>
+      rng.nextLong
+    }
 
     val int: Random[Int] =
       long map (l => (l >>> 16).toInt)
@@ -55,13 +56,12 @@ object Rand15SequenceTraverse extends App {
       (int, int).tupled
   }
 
-
   import Random._
 
   val rand: Random[(Int, Double, Boolean, (Int, Int))] = for { // program description: doesn't do anything!
-    i <- int
-    d <- double
-    b <- boolean
+    i  <- int
+    d  <- double
+    b  <- boolean
     ip <- intPair
   } yield (i, d, b, ip)
 
@@ -72,7 +72,6 @@ object Rand15SequenceTraverse extends App {
   println("random Boolean: " + b)
   println("random IntPair: " + ip)
 
-
   println("----- Monadic Random ...")
 
   val rollDie: Random[Int] =
@@ -81,10 +80,11 @@ object Rand15SequenceTraverse extends App {
   import cats.syntax.functor._
   import cats.syntax.flatMap._
 
-  def sumOfSquares[F[_]: Monad](mi1: F[Int], mi2: F[Int]): F[Int] = for {
-    i1 <- mi1
-    i2 <- mi2
-  } yield i1 * i1 + i2 * i2
+  def sumOfSquares[F[_]: Monad](mi1: F[Int], mi2: F[Int]): F[Int] =
+    for {
+      i1 <- mi1
+      i2 <- mi2
+    } yield i1 * i1 + i2 * i2
 
   import cats.instances.option._
 
@@ -92,9 +92,8 @@ object Rand15SequenceTraverse extends App {
   println(s"sumOfSquares[Option]: $optionResult")
 
   private val random = sumOfSquares(rollDie, rollDie)
-  val randomResult = random.runA(RNG(42))
+  val randomResult   = random.runA(RNG(42))
   println(s"sumOfSquares[Random]: $randomResult")
-
 
   println("----- Rolling dies ...")
 
@@ -103,8 +102,8 @@ object Rand15SequenceTraverse extends App {
       Applicative[Random].pure[List[Int]](List.empty[Int])
     else
       State { rng =>
-        val (r1, x) = rollDie.run(rng).value
-        val (r2, xs) = rollDieNTimes1(n-1).run(r1).value
+        val (r1, x)  = rollDie.run(rng).value
+        val (r2, xs) = rollDieNTimes1(n - 1).run(r1).value
         (r2, x :: xs)
       }
 
@@ -114,13 +113,13 @@ object Rand15SequenceTraverse extends App {
     if (n <= 0)
       List.empty[Int].pure[Random]
     else
-      (rollDie, rollDieNTimes2(n-1)) mapN (_ :: _)
+      (rollDie, rollDieNTimes2(n - 1)) mapN (_ :: _)
 
   def rollDieNTimes3(n: Int): Random[List[Int]] = State { rng =>
     val randList: List[Random[Int]] = (0 until (0 max n)).toList map (_ => rollDie)
     randList.foldRight((rng, List.empty[Int])) { (rand, acc) =>
       val (oldRng, xs) = acc
-      val (newRng, x) = rand.run(oldRng).value
+      val (newRng, x)  = rand.run(oldRng).value
       (newRng, x :: xs)
     }
   }
@@ -131,18 +130,18 @@ object Rand15SequenceTraverse extends App {
   def sequenceRands(randList: List[Random[Int]]): Random[List[Int]] = State { rng =>
     randList.foldRight((rng, List.empty[Int])) { (rand, acc) =>
       val (oldRng, xs) = acc
-      val (newRng, x) = rand.run(oldRng).value
+      val (newRng, x)  = rand.run(oldRng).value
       (newRng, x :: xs)
     }
   }
 
   def rollDieNTimes5(n: Int): Random[List[Int]] =
-     traverseRands((0 until (0 max n)).toList)(_ => rollDie)
+    traverseRands((0 until (0 max n)).toList)(_ => rollDie)
 
   def traverseRands(intList: List[Int])(f: Int => Random[Int]): Random[List[Int]] = State { rng =>
     intList.foldRight((rng, List.empty[Int])) { (int, acc) =>
       val (oldRng, xs) = acc
-      val (newRng, x) = f(int).run(oldRng).value
+      val (newRng, x)  = f(int).run(oldRng).value
       (newRng, x :: xs)
     }
   }
@@ -153,7 +152,7 @@ object Rand15SequenceTraverse extends App {
   def traverse[A, B](list: List[A])(f: A => Random[B]): Random[List[B]] = State { rng =>
     list.foldRight((rng, List.empty[B])) { (a, acc) =>
       val (oldRng, bs) = acc
-      val (newRng, b) = f(a).run(oldRng).value
+      val (newRng, b)  = f(a).run(oldRng).value
       (newRng, b :: bs)
     }
   }
@@ -163,7 +162,6 @@ object Rand15SequenceTraverse extends App {
 
   def sequence[A, B](list: List[Random[A]]): Random[List[A]] =
     traverse(list)(identity)
-
 
   val rolled = for { // program description: doesn't do anything!
     rolled1 <- rollDieNTimes1(20)
