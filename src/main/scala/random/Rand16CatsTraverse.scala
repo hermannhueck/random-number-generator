@@ -5,7 +5,6 @@ import cats.syntax.apply._
 import cats.{Monad, Traverse}
 import libRandom.RNG
 
-import scala.language.higherKinds
 
 /*
   Using typeclass 'cats.Traverse'

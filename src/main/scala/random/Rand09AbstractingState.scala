@@ -3,7 +3,6 @@ package random
 import cats.Monad
 import libRandom.RNG
 
-import scala.language.higherKinds
 
 /*
   The 'Random' Monad:                       case class Random[A](run: RNG => (RNG, A))

@@ -5,7 +5,6 @@ import cats.data.State
 import cats.syntax.apply._
 import libRandom.RNG
 
-import scala.language.higherKinds
 
 /*
   In 'rollDieNTimes1' and 'rollDieNTimes2' we just list an empty List[Int] into a 'Random' context

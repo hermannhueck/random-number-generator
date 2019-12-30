@@ -6,7 +6,6 @@ import cats.instances.list._
 import cats.syntax.apply._
 import libRandom.RNG
 
-import scala.language.higherKinds
 
 /*
   In this step we go from Int pairs to generic pairs of type A and B.

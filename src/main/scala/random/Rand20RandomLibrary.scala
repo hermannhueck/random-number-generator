@@ -3,7 +3,6 @@ package random
 import cats.Monad
 import libRandom.RNG
 
-import scala.language.higherKinds
 
 /*
   In this step we moved the Random object into its own package 'libRandom'

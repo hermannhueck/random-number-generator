@@ -5,7 +5,6 @@ import cats.data.State
 import cats.syntax.apply._
 import libRandom.RNG
 
-import scala.language.higherKinds
 
 /*
   This implementation step replaces 'map2' and 'tuple2' with 'mapN' and 'tupled' from Cats.

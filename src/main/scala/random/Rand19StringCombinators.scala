@@ -6,7 +6,6 @@ import cats.instances.list._
 import cats.syntax.apply._
 import libRandom.RNG
 
-import scala.language.higherKinds
 
 /*
   This step adds random strings of various kinds.

@@ -4,7 +4,6 @@ import cats.Monad
 import cats.data.State
 import libRandom.RNG
 
-import scala.language.higherKinds
 
 /*
   The State Monad is provide in cats.data.State.

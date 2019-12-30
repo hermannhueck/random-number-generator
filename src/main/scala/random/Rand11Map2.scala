@@ -4,7 +4,6 @@ import cats.Monad
 import cats.data.State
 import libRandom.RNG
 
-import scala.language.higherKinds
 
 /*
   'map' uses a function 'A => B' to map a 'Random[A]' to a 'Random[B]'.

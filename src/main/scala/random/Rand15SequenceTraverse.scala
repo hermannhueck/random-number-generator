@@ -5,7 +5,6 @@ import cats.data.State
 import cats.syntax.apply._
 import libRandom.RNG
 
-import scala.language.higherKinds
 
 /*
   Deducing 'sequence' and 'traverse'

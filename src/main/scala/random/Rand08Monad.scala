@@ -3,7 +3,6 @@ package random
 import cats.Monad
 import libRandom.RNG
 
-import scala.language.higherKinds
 
 /*
   With 'map' and 'flatMap' it is easy to give 'Random' a Monad instance.

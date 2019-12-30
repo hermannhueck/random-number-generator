@@ -7,7 +7,6 @@ import cats.syntax.apply._
 import cats.syntax.traverse._
 import libRandom.RNG
 
-import scala.language.higherKinds
 
 /*
   Having constucted the basic functional structure of random value generation
